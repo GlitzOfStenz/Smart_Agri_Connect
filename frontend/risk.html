@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Unsold Risk Prediction</title>
+
+<style>
+body{
+    font-family:Arial;
+    background:#f0fff4;
+    text-align:center;
+}
+
+.card{
+    background:white;
+    padding:15px;
+    margin:10px;
+    border-radius:10px;
+    width:220px;
+    display:inline-block;
+    box-shadow:0 5px 12px rgba(0,0,0,0.1);
+}
+
+.high{color:red;}
+.medium{color:orange;}
+.low{color:green;}
+</style>
+
+</head>
+
+<body>
+
+<h2>⚠️ Unsold Produce Risk</h2>
+
+<div id="list"></div>
+
+<script>
+
+fetch("http://localhost:3000/riskPrediction")
+.then(res => res.json())
+.then(data => {
+
+    let output = "";
+
+    data.forEach(item => {
+
+        let suggestion = "";
+
+        if(item.risk === "High"){
+            suggestion = "💡 Avoid planting more ❌";
+        }
+        else if(item.risk === "Medium"){
+            suggestion = "⚠️ Be careful";
+        }
+        else{
+            suggestion = "✅ Safe to sell";
+        }
+
+        output += `
+        <div class="card">
+            <h3>${item.crop_name}</h3>
+            <p>📦 Quantity: ${item.quantity}</p>
+            <p>🛒 Orders: ${item.orders}</p>
+
+            <p class="${item.risk.toLowerCase()}">
+                ${item.risk} Risk
+            </p>
+
+            <p>${suggestion}</p>
+        </div>
+        `;
+    });
+
+    document.getElementById("list").innerHTML = output;
+});
+
+</script>
+
+</body>
+</html>

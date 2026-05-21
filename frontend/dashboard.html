@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Smart Agri Connect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* ===== General Reset ===== */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+                sans-serif;
+            background-color: #d4edda;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        h2, h3 { margin: 10px 0; }
+        p { margin: 5px 0; }
+
+        /* ===== Navbar ===== */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #2e8b57;
+            color: white;
+            padding: 12px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .navbar .logo { font-weight: bold; font-size: 24px; }
+        .navbar .nav-links { list-style: none; display: flex; gap: 15px; margin:0; padding:0; }
+        .navbar .nav-links li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .navbar .nav-links li a:hover { text-decoration: underline; }
+
+        /* ===== Container ===== */
+        .container {
+            background: #f7f9f5;
+            padding: 25px 20px;
+            margin: 30px auto;
+            max-width: 800px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        }
+
+        /* ===== Welcome Section ===== */
+        .welcome {
+            text-align: center;
+            background: #d4edda;
+            color: #155724;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            font-size: 26px;
+        }
+
+        /* ===== Map Placeholder ===== */
+        .map-placeholder {
+            background: #cce5d1;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 18px;
+            color: #155724;
+        }
+
+        /* ===== Cards ===== */
+        .cards-container, .products-container, .iot-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .card, .product-card, .iot-card {
+            background: #e6f2ea;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .card button, .product-card button {
+            margin-top: 10px;
+            background: #2e8b57;
+            color: white;
+            border: none;
+            padding: 7px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .card button:hover, .product-card button:hover { background-color: #246b45; }
+
+        /* ===== Forms ===== */
+        .profile-form input, .profile-form select, .profile-form button {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+        .profile-form button {
+            background-color: #2e8b57;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .profile-form button:hover { background-color: #246b45; }
+
+        /* ===== No Items Message ===== */
+        .no-items {
+            text-align: center;
+            color: #555;
+            font-style: italic;
+            margin-top: 10px;
+        }
+
+        /* ===== Footer ===== */
+        footer {
+            background: #2e8b57;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- ===== Navbar ===== -->
+    <nav class="navbar">
+        <div class="logo">Smart Agri Connect</div>
+        <ul class="nav-links">
+            <li><a href="home.html">Home</a></li>
+            <li><a href="#map">Map</a></li>
+            <li><a href="profile.html">
+<i class="fa-solid fa-user"></i>
+Profile</a></li>
+            <li><a href="#" onclick="logout()">Logout</a></li>
+        </ul>
+    </nav>
+
+    <!-- ===== Welcome ===== -->
+    <div class="container welcome">
+        <h2>Welcome, <span id="userName"></span></h2>
+        <p>Role: <span id="userRole"></span> | District: <span id="userDistrict"></span></p>
+    </div>
+
+    <!-- ===== Map ===== -->
+    <section id="map" class="container">
+        <h2>District-Wise Heatmap</h2>
+        <div class="map-placeholder">Map coming soon...</div>
+    </section>
+
+    <!-- ===== AI Insights ===== -->
+    <section id="ai" class="container">
+        <h2>AI Insights</h2>
+        <div class="cards-container">
+            <div class="card">
+                <i class="fa-solid fa-chart-line"></i>
+                <h3>Demand Prediction</h3>
+                <p>AI predicts crop demand to maximize profit.</p>
+            </div>
+            <div class="card">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <h3>Unsold Risk</h3>
+                <p>AI alerts potential unsold produce risk.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Products Feed ===== -->
+    <section id="products" class="container">
+        <h2>Products Feed</h2>
+        <div class="products-container" id="productsContainer"></div>
+        <p id="noProductsMessage" class="no-items">No items added</p>
+    </section>
+
+    <!-- ===== IoT Sensor Data ===== -->
+    <section id="iot" class="container">
+        <h2>IoT Sensor Data</h2>
+        <div class="iot-cards" id="iotCards"></div>
+        <p id="noIotMessage" class="no-items">No IoT data available</p>
+    </section>
+
+    <!-- ===== Weather ===== -->
+    <section id="weather" class="container">
+        <h2>Weather & Market Insights</h2>
+        <p id="weatherInfo">Sunny, 28°C | Market trends coming soon</p>
+    </section>
+
+    <!-- ===== Profile ===== -->
+    <section id="profile" class="container">
+        <h2>Add Your Crops</h2>
+        <form class="profile-form" id="profileForm">
+            <input type="text" id="cropName" placeholder="Crop Name">
+            <input type="number" id="cropPrice" placeholder="Price (₹)">
+            <input type="file" id="cropPhoto">
+            <button type="submit">+ Add Crop</button>
+        </form>
+        <p class="no-items" id="profileMessage"></p>
+    </section>
+
+    <!-- ===== Messages & Support ===== -->
+    <section id="chat" class="container">
+        <h2>Messages & Support</h2>
+        <p>Chat with farmers, buyers, and Agri Officers.</p>
+    </section>
+
+    <!-- ===== Footer ===== -->
+    <footer>
+        &copy; 2026 Smart Agri Connect | Support: +91-XXXX-XXXXXX
+    </footer>
+
+    <!-- ===== Scripts ===== -->
+    <script>
+        // ===== User Info =====
+        const user = JSON.parse(localStorage.getItem('user'));
+        if(user){
+            document.getElementById('userName').textContent = user.name;
+            document.getElementById('userRole').textContent = user.role;
+            document.getElementById('userDistrict').textContent = user.district;
+        } else {
+            alert("Please login first!");
+            window.location.href = "login.html";
+        }
+
+        // ===== Products Feed =====
+        const products = JSON.parse(localStorage.getItem('products')) || [];
+        const container = document.getElementById('productsContainer');
+        const noProductsMsg = document.getElementById('noProductsMessage');
+
+        function renderProducts() {
+            container.innerHTML = '';
+            if(products.length > 0){
+                noProductsMsg.style.display = "none";
+                products.forEach(p => {
+                    const div = document.createElement('div');
+                    div.classList.add('product-card');
+                    div.innerHTML = `
+                        <h3>${p.name}</h3>
+                        <p>Owner: ${p.owner}</p>
+                        <p>Price: ${p.price}</p>
+                        ${p.photo ? `<p>Photo: ${p.photo}</p>` : ''}
+                        <button onclick="alert('Contact ${p.owner}')">Contact</button>
+                    `;
+                    container.appendChild(div);
+                });
+            } else {
+                noProductsMsg.style.display = "block";
+            }
+        }
+        renderProducts();
+
+        // ===== IoT Feed =====
+        const iotData = JSON.parse(localStorage.getItem('iotData')) || [];
+        const iotContainer = document.getElementById('iotCards');
+        const noIotMsg = document.getElementById('noIotMessage');
+
+        if(iotData.length > 0){
+            noIotMsg.style.display = "none";
+            iotData.forEach(d => {
+                const div = document.createElement('div');
+                div.classList.add('iot-card');
+                div.textContent = d;
+                iotContainer.appendChild(div);
+            });
+        }
+
+        // ===== Profile Crop Upload =====
+        const profileForm = document.getElementById('profileForm');
+        profileForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const name = document.getElementById('cropName').value.trim();
+            const price = document.getElementById('cropPrice').value.trim();
+            const photo = document.getElementById('cropPhoto').files[0]?.name || "";
+            if(name && price){
+                const owner = user.name || "Farmer";
+                products.push({name, owner, price: `₹${price}`, photo});
+                localStorage.setItem('products', JSON.stringify(products));
+                document.getElementById('cropName').value = '';
+                document.getElementById('cropPrice').value = '';
+                document.getElementById('cropPhoto').value = '';
+                document.getElementById('profileMessage').textContent = "Crop added successfully!";
+                renderProducts();
+            } else {
+                document.getElementById('profileMessage').textContent = "Please enter crop name and price.";
+            }
+        });
+
+        // ===== Logout =====
+        function logout(){
+            localStorage.removeItem('user');
+            window.location.href = "index.html";
+        }
+    </script>
+</body>
+</html>

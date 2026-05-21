@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Orders</title>
+
+    <style>
+        body{
+            font-family: Arial;
+            background:#f0fff4;
+            margin:0;
+        }
+
+        .header{
+            background:#2e8b57;
+            color:white;
+            padding:15px;
+            text-align:center;
+            font-size:22px;
+        }
+
+        #orders{
+            display:flex;
+            flex-wrap:wrap;
+            justify-content:center;
+            gap:15px;
+            padding:20px;
+        }
+
+        .card{
+            width:250px;
+            background:white;
+            padding:15px;
+            border-radius:10px;
+            box-shadow:0 5px 12px rgba(0,0,0,0.1);
+        }
+
+        .track-box{
+            text-align:center;
+            margin:20px;
+        }
+
+        input{
+            padding:10px;
+            width:200px;
+            border-radius:6px;
+            border:1px solid #ccc;
+        }
+
+        button{
+            padding:10px 15px;
+            margin-left:10px;
+            background:#2e8b57;
+            color:white;
+            border:none;
+            border-radius:6px;
+            cursor:pointer;
+        }
+
+        button:hover{
+            background:#246b45;
+        }
+
+        #deliveryResult{
+            margin-top:15px;
+            font-weight:bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">📦 My Orders</div>
+
+<!-- ORDERS LIST -->
+<div id="orders"></div>
+
+<!-- DELIVERY TRACKING -->
+<div class="track-box">
+    <h2>🚚 Track Delivery</h2>
+
+    <input id="orderId" placeholder="Enter Order ID">
+    <button onclick="checkDelivery()">Check</button>
+
+    <div id="deliveryResult"></div>
+</div>
+
+<script>
+
+// ================= USER CHECK =================
+let user = JSON.parse(localStorage.getItem("user"));
+
+if(!user){
+    alert("Please login");
+    window.location.href = "login.html";
+}
+
+// ================= LOAD ORDERS =================
+fetch("http://localhost:3000/myOrders/" + user.id)
+.then(res => res.json())
+.then(data => {
+
+    let output = "";
+
+    if(data.length === 0){
+        output = "<h3 style='text-align:center'>No orders yet 😢</h3>";
+    } else {
+
+        data.forEach(order => {
+            output += `
+            <div class="card">
+                <h3>${order.crop_name}</h3>
+                <p>📦 Quantity: ${order.quantity}</p>
+                <p>🟢 Status: Ordered</p>
+                <p><b>Order ID:</b> ${order.id}</p>
+            </div>
+            `;
+        });
+    }
+
+    document.getElementById("orders").innerHTML = output;
+});
+
+
+// ================= DELIVERY CHECK =================
+function checkDelivery() {
+
+    let id = document.getElementById("orderId").value.trim();
+
+    if(!id){
+        alert("Enter Order ID");
+        return;
+    }
+
+    fetch("http://localhost:3000/delivery/" + id)
+    .then(res => res.json())
+    .then(data => {
+
+        document.getElementById("deliveryResult").innerHTML = `
+            🚚 Status: ${data.status} <br>
+            👨‍✈️ Delivery Boy: ${data.delivery_boy}
+        `;
+    })
+    .catch(err => {
+        console.log(err);
+        document.getElementById("deliveryResult").innerHTML =
+            "<span style='color:red'>Server error 😢</span>";
+    });
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Farmer Dashboard</title>
+
+<style>
+body{
+    font-family: Arial;
+    margin: 0;
+    background: #f0fff4;
+}
+
+/* Header */
+.header{
+    background: #2e8b57;
+    color: white;
+    padding: 15px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+/* Welcome card */
+.card{
+    width: 80%;
+    max-width: 500px;
+    margin: 30px auto;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+/* Actions box */
+.actions{
+    width: 80%;
+    max-width: 500px;
+    margin: 20px auto;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+/* Buttons */
+button{
+    width: 80%;
+    padding: 12px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 8px;
+    background: #2e8b57;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover{
+    background: #246b45;
+    transform: scale(1.02);
+}
+
+/* Welcome text */
+#welcome{
+    font-size: 20px;
+    color: #2e8b57;
+    font-weight: bold;
+}
+
+</style>
+
+</head>
+
+<body>
+<div class="navbar">
+    <div class="logo">🌱 Smart Agri Connect</div>
+
+    <div class="links">
+        <a href="home.html">Home</a>
+        <a href="sell.html">Sell</a>
+        <a href="buy.html">Marketplace</a>
+        <a href="#" onclick="logout()">Logout</a>
+    </div>
+</div>
+<div class="header">
+🌾 Smart Agri Connect - Farmer Dashboard
+</div>
+
+<div class="card">
+    <p id="welcome"></p>
+    <p>Manage your crops and sales easily 🚜</p>
+</div>
+
+<div class="actions">
+    <h3>Actions</h3>
+
+    <button onclick="goSell()">🌾 Sell Crops</button>
+    <button onclick="logout()">🚪 Logout</button>
+</div>
+
+<script>
+
+// get user from localStorage
+let user = JSON.parse(localStorage.getItem("user"));
+
+// protect page
+if(!user || user.role !== "farmer"){
+    window.location.href = "login.html";
+}
+
+// show welcome message
+document.getElementById("welcome").innerText =
+"Welcome " + user.name + " 👨‍🌾";
+
+function goSell(){
+    window.location.href = "sell.html";
+}
+
+function logout(){
+    localStorage.removeItem("user");
+    window.location.href = "login.html";
+}
+
+</script>
+
+</body>
+</html>

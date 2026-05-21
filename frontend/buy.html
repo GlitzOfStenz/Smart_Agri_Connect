@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Buy Crops</title>
+
+    <style>
+        body{
+            font-family: Arial;
+            background: #f0fff4;
+            margin: 0;
+        }
+
+        .header{
+            background: #2e8b57;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 22px;
+        }
+
+        #list{
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 20px;
+            gap: 15px;
+        }
+
+        .card{
+            width: 260px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.1);
+            padding: 15px;
+            text-align: center;
+        }
+
+        input{
+            width: 90%;
+            padding: 8px;
+            margin-top: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        button{
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background: #2e8b57;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover{
+            background: #246b45;
+        }
+
+        hr{
+            margin: 10px 0;
+        }
+
+        .review-box{
+            margin-top:10px;
+            text-align:left;
+            font-size:14px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div class="header">🌾 Available Crops</div>
+
+<div id="list"></div>
+
+<script>
+
+let user = JSON.parse(localStorage.getItem("user")) || null;
+let cropsData = []; // ⭐ store crops globally
+
+// ================= LOAD CROPS =================
+fetch("http://localhost:3000/getCrops")
+.then(res => res.json())
+.then(data => {
+
+    cropsData = data;
+
+    let output = "";
+
+    data.forEach(crop => {
+
+        // ❌ skip own crops
+        if(user && crop.user_id === user.id){
+            return;
+        }
+
+        output += `
+        <div class="card">
+            <h3>${crop.crop_name}</h3>
+            <p>💰 Price: ₹${crop.price}</p>
+            <p>📦 Available: ${crop.quantity}</p>
+
+            <input type="number" id="qty${crop.id}" placeholder="Enter quantity">
+
+            <button onclick="buy(${crop.id})">Buy</button>
+
+            <hr>
+
+            <input type="number" id="rating${crop.id}" min="1" max="5" placeholder="Rating (1-5)">
+            <input type="text" id="review${crop.id}" placeholder="Write review">
+
+            <button onclick="addReview(${crop.id})">Submit Review</button>
+
+            <div id="reviews${crop.id}" class="review-box"></div>
+        </div>
+        `;
+    });
+
+    document.getElementById("list").innerHTML = output;
+
+    // ⭐ Load reviews after UI render
+    data.forEach(crop => {
+        loadReviews(crop.id, crop.user_id);
+    });
+});
+
+
+// ================= BUY =================
+function buy(cropId){
+
+    const qty = document.getElementById("qty" + cropId).value;
+
+    if(!qty || qty <= 0){
+        alert("Enter valid quantity");
+        return;
+    }
+
+    let user = JSON.parse(localStorage.getItem("user"));
+
+    fetch("http://localhost:3000/placeOrder", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({
+            crop_id: cropId,
+            quantity: qty,
+            buyer_id: user.id
+        })
+    })
+    .then(res => res.json())
+    .then(data => alert(data.message));
+}
+
+
+// ================= ADD REVIEW =================
+function addReview(cropId){
+
+    const rating = document.getElementById("rating" + cropId).value;
+    const review = document.getElementById("review" + cropId).value;
+
+    let user = JSON.parse(localStorage.getItem("user"));
+
+    const crop = cropsData.find(c => c.id === cropId);
+
+    fetch("http://localhost:3000/addReview", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({
+            crop_id: cropId,
+            buyer_id: user.id,
+            rating: rating,
+            comment: review
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert(data.message);
+        loadReviews(cropId);
+    });
+}
+
+// ================= LOAD REVIEWS =================
+function loadReviews(cropId){
+
+    fetch("http://localhost:3000/getReviews/" + cropId)
+    .then(res => res.json())
+    .then(data => {
+
+        let html = "";
+
+        data.forEach(r => {
+            html += `
+                <p>⭐ ${r.rating} - ${r.comment}<br>
+                <small>by ${r.buyer_name}</small></p>
+            `;
+        });
+
+        document.getElementById("reviews" + cropId).innerHTML = html;
+    });
+}
+
+</script>
+
+</body>
+</html>

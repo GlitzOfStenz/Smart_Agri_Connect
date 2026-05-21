@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Weather</title>
+
+    <style>
+        body{
+            font-family: Arial;
+            background:#eef7f1;
+            margin:0;
+            text-align:center;
+        }
+
+        .box{
+            margin-top:100px;
+            background:white;
+            width:300px;
+            padding:20px;
+            border-radius:10px;
+            box-shadow:0 5px 15px rgba(0,0,0,0.1);
+            display:inline-block;
+        }
+
+        input{
+            width:90%;
+            padding:10px;
+            margin:10px 0;
+            border-radius:6px;
+            border:1px solid #ccc;
+        }
+
+        button{
+            width:100%;
+            padding:10px;
+            background:#2e8b57;
+            color:white;
+            border:none;
+            border-radius:6px;
+            cursor:pointer;
+        }
+
+        button:hover{
+            background:#246b45;
+        }
+
+        #result{
+            margin-top:20px;
+            text-align:left;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+
+    <h2>🌤️ Weather Check</h2>
+
+   <input type="text" id="city" placeholder="Enter city name">
+<button onclick="getWeather()">Get Weather</button>
+
+<div id="result"></div>
+
+</div>
+
+<script>
+
+function getWeather() {
+
+    let city = document.getElementById("city").value.trim();
+
+    if (!city) {
+        alert("Enter city");
+        return;
+    }
+
+    city = city + ",IN";   // 👉 move this AFTER validation
+
+    fetch("http://localhost:3000/weather/" + city)
+    .then(res => res.json())
+    .then(data => {
+
+        console.log(data);
+
+        if (data.message) {
+            document.getElementById("result").innerHTML =
+                "<p>City not found 😢</p>";
+            return;
+        }
+
+        document.getElementById("result").innerHTML = `
+            <h3>📍 ${data.city}</h3>
+            <p>🌡 Temperature: ${data.temp} °C</p>
+            <p>☁ Weather: ${data.weather}</p>
+            <p>💧 Humidity: ${data.humidity}%</p>
+            <p>🌬 Wind: ${data.wind} m/s</p>
+        `;
+    })
+    .catch(err => {
+        console.log(err);
+        alert("Something went wrong");
+    });
+}
+</script>
+
+</body>
+</html>

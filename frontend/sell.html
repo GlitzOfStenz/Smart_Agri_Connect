@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Sell Crops</title>
+
+<style>
+body{
+    font-family: Arial;
+    background: #f0fff4;
+    margin: 0;
+}
+
+.header{
+    background: #2e8b57;
+    color: white;
+    padding: 15px;
+    font-size: 20px;
+    text-align: center;
+}
+
+.container{
+    width: 350px;
+    margin: 40px auto;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+input{
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+button{
+    width: 100%;
+    padding: 12px;
+    background: #2e8b57;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover{
+    background: #246b45;
+}
+
+#msg{
+    text-align: center;
+    margin-top: 10px;
+    color: green;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="header">🌾 Sell Your Crops</div>
+
+<div class="container">
+
+<input type="text" id="crop" placeholder="Crop Name">
+<input type="number" id="price" placeholder="Price">
+<input type="number" id="qty" placeholder="Quantity">
+
+<button onclick="addCrop()">Add Crop</button>
+
+<p id="msg"></p>
+
+</div>
+
+<script>
+
+let user = JSON.parse(localStorage.getItem("user"));
+
+if(!user || user.role !== "farmer"){
+    window.location.href = "login.html";
+}
+
+function addCrop(){
+
+    let user = JSON.parse(localStorage.getItem("user"));
+
+    const data = {
+        user_id: user?.id,
+        crop_name: document.getElementById("crop").value,
+        price: parseInt(document.getElementById("price").value),
+        quantity: parseInt(document.getElementById("qty").value)
+    };
+
+    console.log("Sending data:", data); // 👈 IMPORTANT
+
+    fetch("http://localhost:3000/addCrop", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(result => {
+        console.log(result);
+        document.getElementById("msg").innerText = result.message;
+    })
+    .catch(err => {
+        console.log(err);
+        document.getElementById("msg").innerText = "Server error";
+    });
+}
+
+</script>
+
+</body>
+</html>

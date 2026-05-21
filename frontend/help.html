@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Help Desk</title>
+</head>
+
+<body>
+
+<h2>👨‍🌾 Ask Agri Officer</h2>
+
+<textarea id="question" placeholder="Ask your doubt..." style="width:300px;height:80px;"></textarea><br>
+<button onclick="send()">Send</button>
+
+<h3>📩 My Questions</h3>
+<div id="list"></div>
+
+<script>
+
+let user = JSON.parse(localStorage.getItem("user"));
+
+function send(){
+
+    fetch("http://localhost:3000/askHelp", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({
+            user_id: user.id,
+            question: document.getElementById("question").value
+        })
+    })
+    .then(res=>res.json())
+    .then(data=>{
+        alert(data.message);
+        load();
+    });
+}
+
+function load(){
+
+    fetch("http://localhost:3000/myHelp/" + user.id)
+    .then(res=>res.json())
+    .then(data=>{
+
+        let out="";
+
+        data.forEach(q=>{
+            out += `
+            <div>
+                <p><b>Q:</b> ${q.question}</p>
+                <p><b>A:</b> ${q.reply || "Waiting..."}</p>
+                <hr>
+            </div>
+            `;
+        });
+
+        document.getElementById("list").innerHTML = out;
+    });
+}
+
+load();
+
+</script>
+
+</body>
+</html>

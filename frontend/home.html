@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Home - Smart Agri Connect</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+body{
+font-family: Arial;
+margin:0;
+background:#eef7f1;
+}
+
+/* NAVBAR */
+
+.navbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px 30px;
+background:#2e8b57;
+color:white;
+}
+
+.logo{
+font-size:22px;
+font-weight:bold;
+}
+
+.nav-links a{
+color:white;
+text-decoration:none;
+margin-left:20px;
+font-weight:bold;
+}
+
+.nav-links a:hover{
+text-decoration:underline;
+}
+
+/* HERO */
+
+.hero{
+text-align:center;
+padding:60px 20px;
+background:linear-gradient(to right,#519e73,#4CAF50);
+color:white;
+}
+
+.hero h1{
+font-size:40px;
+margin-bottom:10px;
+}
+
+.hero p{
+font-size:18px;
+}
+
+/* CARDS */
+
+.cards{
+padding:40px;
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:25px;
+}
+
+.card{
+background:white;
+width:240px;
+padding:25px;
+border-radius:12px;
+text-align:center;
+box-shadow:0 6px 15px rgba(0,0,0,0.1);
+transition:0.3s;
+}
+
+.card:hover{
+transform:translateY(-8px);
+}
+
+.card i{
+font-size:35px;
+color:#2e8b57;
+margin-bottom:10px;
+}
+
+.card h3{
+margin:10px 0;
+}
+
+.card button{
+margin-top:10px;
+padding:8px 15px;
+border:none;
+background:#2e8b57;
+color:white;
+border-radius:5px;
+cursor:pointer;
+}
+
+.card button:hover{
+background:#246b45;
+}
+
+/* INFO SECTION */
+
+.info{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:30px;
+padding:40px;
+}
+
+.info-box{
+background:white;
+padding:25px;
+border-radius:10px;
+width:300px;
+box-shadow:0 5px 12px rgba(0,0,0,0.1);
+}
+
+/* FOOTER */
+
+footer{
+text-align:center;
+background:#2e8b57;
+color:white;
+padding:15px;
+margin-top:40px;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<div class="navbar">
+
+<div class="logo">🌱 Smart Agri Connect</div>
+
+<div class="nav-links">
+<a href="home.html">Home</a>
+<a href="profile.html"><i class="fa-solid fa-user"></i> Profile</a>
+<a href="#" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+</div>
+
+</div>
+
+
+<!-- HERO -->
+
+<section class="hero">
+
+<h1 id="welcome"></h1>
+
+<p>Connecting Farmers and Buyers with Smart Technology</p>
+
+</section>
+
+
+<!-- FEATURE CARDS -->
+
+<section class="cards">
+
+<div class="card">
+<i class="fa-solid fa-seedling"></i>
+<h3>Sell Crops</h3>
+<p>Farmers can list their harvest and sell directly.</p>
+<button onclick="goSell()">Open</button>
+</div>
+
+<div class="card">
+<i class="fa-solid fa-cart-shopping"></i>
+<h3>Buy Crops</h3>
+<p>Buyers can find fresh crops from farmers.</p>
+<button onclick="goBuy()">Open</button>
+</div>
+
+<div class="card">
+<i class="fa-solid fa-cloud-sun"></i>
+<h3>Weather</h3>
+<p>Check latest weather updates for farming.</p>
+<button onclick="goWeather()">Open</button>
+</div>
+<div class="card">
+<i class="fa-solid fa-truck"></i>
+<h3>Delivery Partners</h3>
+<p>View available delivery partners</p>
+<button onclick="goDeliveryList()">Open</button>
+</div>
+<div class="card">
+<i class="fa-solid fa-chart-line"></i>
+<h3>AI Prediction</h3>
+<p>AI predicts demand for crops.</p>
+<button onclick="goDemand()">Open</button>
+</div>
+<div class="card">
+<i class="fa-solid fa-triangle-exclamation"></i>
+<h3>Risk Prediction</h3>
+<p>Check unsold crop risk using AI.</p>
+<button onclick="goRisk()">Open</button>
+</div>
+<div class="card">
+<i class="fa-solid fa-box"></i>
+<h3>My Orders</h3>
+<p>View your purchased crops</p>
+<button onclick="goOrders()">Open</button>
+</div>
+<div class="card">
+<i class="fa-solid fa-map"></i>
+<h3>District Heatmap</h3>
+<p>See crop demand by district.</p>
+<button onclick="goHeatmap()">Open</button>
+</div>
+
+<div class="card">
+<i class="fa-solid fa-comments"></i>
+<h3>Chat</h3>
+<p>Talk directly with farmers or buyers.</p>
+<button>Open</button>
+</div>
+<div class="card">
+<i class="fa-solid fa-user-tie"></i>
+<h3>Agri Officer Help Desk</h3>
+<p>Ask questions and get advice from agricultural officers</p>
+<button onclick="goHelp()">Open</button>
+</div>
+</section>
+
+
+<!-- EXTRA INFO -->
+
+<section class="info">
+
+<div class="info-box">
+<h3>📊 Market Insights</h3>
+<p>Get daily crop price trends and demand predictions.</p>
+</div>
+
+<div class="info-box">
+<h3>🌦 Weather Forecast</h3>
+<p>Plan your farming activities based on weather alerts.</p>
+</div>
+
+<div class="info-box">
+<h3>🚚 Local Delivery</h3>
+<p>Farmers can deliver produce to nearby buyers.</p>
+</div>
+
+</section>
+
+
+<footer>
+
+<p>Smart Agri Connect © 2026</p>
+
+</footer>
+
+
+<script>
+
+let user = localStorage.getItem("user");
+
+if (!user) {
+    window.location.href = "login.html";
+} else {
+    user = JSON.parse(user);
+    document.getElementById("welcome").innerText =
+        "Welcome " + user.name + " 🌾";
+}
+
+function logout() {
+    localStorage.removeItem("user");
+    window.location.href = "login.html";
+}
+function goRisk(){
+    window.location.href = "risk.html";
+}
+function goBuy() {
+
+    window.location.href = "buy.html";
+}
+function goHelp(){
+
+    if(user.role === "officer"){
+        window.location.href = "officer.html";
+    } else {
+        window.location.href = "help.html";
+    }
+}
+function goSell() {
+    window.location.href = "sell.html";
+}
+function goDemand(){
+    window.location.href = "demand.html";
+}
+function goOrders(){
+    window.location.href = "order.html";
+}
+function goWeather(){
+    window.location.href = "weather.html";
+}
+function goDeliveryList(){
+    window.location.href = "delivery.html";
+}
+function goHeatmap(){
+    window.location.href = "heatmap.html";
+}
+</script>
+
+</body>
+</html>

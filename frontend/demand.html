@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Demand Prediction</title>
+
+<style>
+body{
+    font-family: Arial;
+    background:#f0fff4;
+    margin:0;
+    padding:0;
+}
+
+/* TITLE */
+h2{
+    text-align:center;
+    padding:15px;
+}
+
+/* CARD DESIGN */
+.card{
+    background:white;
+    padding:15px;
+    margin:10px;
+    border-radius:12px;
+    width:220px;
+    text-align:center;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+    transition:0.3s;
+}
+
+.card:hover{
+    transform: scale(1.05);
+}
+
+/* DEMAND COLORS */
+.high{color:green; font-weight:bold;}
+.medium{color:orange; font-weight:bold;}
+.low{color:red; font-weight:bold;}
+
+/* CONTAINER */
+#list{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+}
+
+/* EMPTY MESSAGE */
+.empty{
+    text-align:center;
+    width:100%;
+    font-size:18px;
+    color:gray;
+}
+</style>
+
+</head>
+
+<body>
+
+<h2>📊 Smart Demand Prediction</h2>
+
+<div id="list"></div>
+
+<script>
+
+fetch("http://localhost:3000/demandPrediction")
+.then(res => res.json())
+.then(data => {
+
+    console.log("Demand Data:", data);
+
+    /* EMPTY CHECK */
+    if(!data || data.length === 0){
+        document.getElementById("list").innerHTML =
+        "<p class='empty'>No demand data available</p>";
+        return;
+    }
+
+    let output = "";
+
+    data.forEach(item => {
+
+        output += `
+        <div class="card">
+            <h3>${item.crop_name}</h3>
+
+            <p>📦 Orders: ${item.orders}</p>
+
+            <p class="${item.demand.toLowerCase()}">
+                ${item.demand} Demand
+            </p>
+
+            <p>💡 ${item.suggestion || "No suggestion available"}</p>
+        </div>
+        `;
+    });
+
+    document.getElementById("list").innerHTML = output;
+})
+.catch(err => {
+    console.log("Error:", err);
+    document.getElementById("list").innerHTML =
+    "<p class='empty'>Error loading data</p>";
+});
+
+</script>
+
+</body>
+</html>

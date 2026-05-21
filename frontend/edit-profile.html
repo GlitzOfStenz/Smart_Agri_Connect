@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Edit Profile</title>
+
+<style>
+body{
+    font-family: Arial;
+    background:#f0fff4;
+    margin:0;
+}
+
+.container{
+    width:400px;
+    margin:50px auto;
+    background:white;
+    padding:20px;
+    border-radius:12px;
+}
+
+input,textarea{
+    width:100%;
+    padding:8px;
+    margin:5px 0;
+}
+
+button{
+    width:100%;
+    padding:10px;
+    background:#2e8b57;
+    color:white;
+    border:none;
+    border-radius:6px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>✏️ Edit Profile</h2>
+
+<input id="name">
+<input id="email">
+<input id="phone">
+<input id="district">
+<textarea id="address"></textarea>
+<textarea id="intro"></textarea>
+
+<button onclick="save()">Save</button>
+
+</div>
+
+<script>
+
+let user = JSON.parse(localStorage.getItem("user"));
+
+if(!user){
+    window.location.href="login.html";
+}
+
+/* LOAD */
+document.getElementById("name").value=user.name;
+document.getElementById("email").value=user.email;
+document.getElementById("phone").value=user.phone;
+document.getElementById("district").value=user.district;
+document.getElementById("address").value=user.address||"";
+document.getElementById("intro").value=user.intro||"";
+
+/* SAVE */
+async function save(){
+
+    user.name=document.getElementById("name").value;
+    user.email=document.getElementById("email").value;
+    user.phone=document.getElementById("phone").value;
+    user.district=document.getElementById("district").value;
+    user.address=document.getElementById("address").value;
+    user.intro=document.getElementById("intro").value;
+
+    await fetch("http://localhost:3000/updateProfile",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify(user)
+    });
+
+    localStorage.setItem("user",JSON.stringify(user));
+
+    alert("Updated!");
+    window.location.href="profile.html";
+}
+
+</script>
+
+</body>
+</html>

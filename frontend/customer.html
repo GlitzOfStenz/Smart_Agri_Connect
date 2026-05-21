@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customer Dashboard</title>
+</head>
+<body>
+
+<h2>Customer Dashboard 🛒</h2>
+
+<p id="welcome"></p>
+
+<hr>
+
+<h3>Actions</h3>
+
+<button onclick="goBuy()">Buy Crops</button><br><br>
+<button onclick="logout()">Logout</button>
+
+<script>
+
+// get user from localStorage
+let user = JSON.parse(localStorage.getItem("user"));
+
+// 🔒 protect page
+if(!user || user.role !== "customer"){
+    window.location.href = "login.html";
+}
+
+// welcome message
+document.getElementById("welcome").innerText =
+"Welcome " + user.name + " 🛒";
+
+// go to buy page
+function goBuy(){
+    window.location.href = "buy.html";
+}
+
+// logout
+function logout(){
+    localStorage.removeItem("user");
+    window.location.href = "login.html";
+}
+
+</script>
+
+</body>
+</html>

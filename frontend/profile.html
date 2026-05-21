@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Farmer Profile</title>
+
+<style>
+body{
+    font-family: Arial;
+    margin:0;
+    background:#f0fff4;
+}
+
+.navbar{
+    background:#2e8b57;
+    color:white;
+    padding:15px;
+    display:flex;
+    justify-content:space-between;
+}
+
+.navbar a{
+    color:white;
+    margin-left:15px;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+.container{
+    width:90%;
+    max-width:900px;
+    margin:20px auto;
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+.profile-box{
+    display:flex;
+    gap:20px;
+}
+
+.profile-box img{
+    width:120px;
+    height:120px;
+    border-radius:50%;
+}
+
+.card{
+    background:white;
+    padding:15px;
+    width:200px;
+    border-radius:10px;
+    text-align:center;
+    box-shadow:0 5px 12px rgba(0,0,0,0.1);
+}
+
+.card input{
+    width:90%;
+    padding:6px;
+}
+
+button{
+    padding:8px;
+    margin-top:5px;
+    background:#2e8b57;
+    color:white;
+    border:none;
+    cursor:pointer;
+}
+
+.delete{
+    background:red;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="navbar">
+    <div>🌱 Smart Agri Connect</div>
+    <div>
+        <a href="home.html">Home</a>
+        <a href="profile.html">Profile</a>
+        <a href="#" onclick="logout()">Logout</a>
+    </div>
+</div>
+
+<!-- PROFILE -->
+<div class="container">
+
+<h2>👨‍🌾 My Profile</h2>
+
+<div class="profile-box">
+    <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png">
+
+    <div>
+        <p><b>Name:</b> <span id="name"></span></p>
+        <p><b>Email:</b> <span id="email"></span></p>
+        <p><b>Phone:</b> <span id="phone"></span></p>
+        <p><b>District:</b> <span id="district"></span></p>
+
+        <button onclick="goEdit()">Edit Profile</button>
+    </div>
+</div>
+
+</div>
+
+<!-- MY CROPS -->
+<div class="container">
+
+<h2>🌾 My Crops</h2>
+
+<div id="list" style="display:flex; flex-wrap:wrap; gap:15px;"></div>
+
+</div>
+
+<script>
+
+// ===== CHECK LOGIN =====
+let user = JSON.parse(localStorage.getItem("user"));
+
+if(!user){
+    window.location.href="login.html";
+}
+
+// ===== LOAD PROFILE =====
+document.getElementById("name").innerText = user.name;
+document.getElementById("email").innerText = user.email;
+document.getElementById("phone").innerText = user.phone;
+document.getElementById("district").innerText = user.district;
+
+// ===== LOAD CROPS (MAIN FUNCTION) =====
+function loadMyCrops(){
+
+    fetch("http://localhost:3000/myCrops/" + user.id)
+    .then(res => res.json())
+    .then(data => {
+
+        if(!data || data.length === 0){
+            document.getElementById("list").innerHTML = "<p>No crops added yet</p>";
+            return;
+        }
+
+        let output = "";
+
+        data.forEach(crop => {
+            output += `
+            <div class="card">
+                <h3>${crop.crop_name}</h3>
+                <p>₹${crop.price}</p>
+
+                <input type="number" id="qty${crop.id}" value="${crop.quantity}">
+
+                <button onclick="updateCrop(${crop.id})">Update</button>
+                <button class="delete" onclick="deleteCrop(${crop.id})">Delete</button>
+            </div>
+            `;
+        });
+
+        document.getElementById("list").innerHTML = output;
+    })
+    .catch(err => {
+        console.log(err);
+        document.getElementById("list").innerHTML = "Error loading crops";
+    });
+}
+
+// ===== CALL ON LOAD =====
+loadMyCrops();
+
+// ===== UPDATE CROP =====
+function updateCrop(id){
+
+    const qty = document.getElementById("qty" + id).value;
+
+    // validation
+    if(qty <= 0){
+        alert("Quantity must be greater than 0");
+        return;
+    }
+
+    fetch("http://localhost:3000/updateCrop", {
+        method:"PUT",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ id:id, quantity:qty })
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert(data.message);
+        loadMyCrops(); // 🔥 auto refresh (no reload)
+    });
+}
+
+// ===== DELETE CROP =====
+function deleteCrop(id){
+
+    if(!confirm("Are you sure you want to delete this crop?")){
+        return;
+    }
+
+    fetch("http://localhost:3000/deleteCrop/" + id, {
+        method:"DELETE"
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert(data.message);
+        loadMyCrops(); // 🔥 auto refresh
+    });
+}
+
+// ===== NAVIGATION =====
+function goEdit(){
+    window.location.href="edit-profile.html";
+}
+
+function logout(){
+    localStorage.removeItem("user");
+    window.location.href="login.html";
+}
+
+</script>
+
+</body>
+</html>

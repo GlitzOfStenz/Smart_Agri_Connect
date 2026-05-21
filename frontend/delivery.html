@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Delivery Dashboard</title>
+
+<style>
+body{
+    font-family:Arial;
+    background:#eef7f1;
+    text-align:center;
+}
+
+.box{
+    margin-top:50px;
+}
+
+input{
+    padding:10px;
+    margin:5px;
+    width:200px;
+}
+
+button{
+    padding:10px;
+    background:#2e8b57;
+    color:white;
+    border:none;
+    cursor:pointer;
+}
+
+.card{
+    background:white;
+    padding:10px;
+    margin:10px auto;
+    width:300px;
+    border-radius:10px;
+    box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
+</style>
+
+</head>
+
+<body>
+
+<h2>🚚 Delivery Partner Dashboard</h2>
+
+<div class="box">
+
+<input id="type" placeholder="Vehicle Type (Bike/Van)">
+<input id="number" placeholder="Vehicle Number">
+<input id="price" placeholder="Price per KM">
+
+<button onclick="addVehicle()">Add Vehicle</button>
+
+</div>
+
+<div id="list"></div>
+
+<script>
+
+let user = JSON.parse(localStorage.getItem("user"));
+
+function addVehicle(){
+
+    fetch("http://localhost:3000/addVehicle", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+       body: JSON.stringify({
+    user_id: user.id,
+    vehicle_type: document.getElementById("type").value,
+    vehicle_number: document.getElementById("number").value,
+    price_per_km: document.getElementById("price").value
+})
+    })
+    .then(res=>res.json())
+    .then(data=>{
+        alert(data.message);
+        loadVehicles();
+    });
+}
+
+function loadVehicles(){
+
+    fetch("http://localhost:3000/getVehicles/" + user.id)
+    .then(res=>res.json())
+    .then(data=>{
+
+        let out="";
+
+        data.forEach(v=>{
+            out += `
+            <div class="card">
+                <h3>${v.vehicle_type}</h3>
+                <p>🚘 ${v.vehicle_number}</p>
+                <p>📦 Capacity: ${v.capacity}</p>
+                <p>🟢 ${v.status}</p>
+            </div>
+            `;
+        });
+
+        document.getElementById("list").innerHTML = out;
+    });
+}
+
+loadVehicles();
+
+</script>
+
+</body>
+</html>

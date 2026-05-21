@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Officer Panel</title>
+</head>
+
+<body>
+
+<h2>👨‍💼 Officer Dashboard</h2>
+
+<div id="list"></div>
+
+<script>
+    let user = JSON.parse(localStorage.getItem("user"));
+
+if(!user || user.role !== "officer"){
+    alert("Access denied ❌");
+    window.location.href = "login.html";
+}
+
+function load(){
+
+    fetch("http://localhost:3000/allHelp")
+    .then(res=>res.json())
+    .then(data=>{
+
+        let out="";
+
+        data.forEach(q=>{
+            out += `
+            <div>
+                <p><b>${q.name}</b></p>
+                <p>${q.question}</p>
+
+                <input id="r${q.id}" placeholder="Reply...">
+                <button onclick="reply(${q.id})">Send</button>
+
+                <hr>
+            </div>
+            `;
+        });
+
+        document.getElementById("list").innerHTML = out;
+    });
+}
+
+function reply(id){
+
+    fetch("http://localhost:3000/replyHelp", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({
+            id:id,
+            reply: document.getElementById("r"+id).value
+        })
+    })
+    .then(res=>res.json())
+    .then(data=>{
+        alert(data.message);
+        load();
+    });
+}
+
+load();
+
+</script>
+
+</body>
+</html>
